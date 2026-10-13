@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8085:8085"
+    environment:
+      APP_KEY: ${APP_KEY:-base64:cmFuZG9tLWtleS1jaGFuZ2UtbWUtcGxlYXNlLTMyYg==}
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: task_manager
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: task_manager
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-psecret"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  dbdata:
