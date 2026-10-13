@@ -41,7 +41,7 @@ A simple Laravel + Bootstrap 4 task manager: create, view, edit, complete and de
 
 ## Setup
 
-Requirements: PHP 8.3+, Composer and a database (MySQL by default; SQLite also works).
+Requirements: PHP 8.4+, Composer and a database (MySQL by default; SQLite also works).
 
 ```bash
 composer install
@@ -55,6 +55,24 @@ php artisan serve
 ```
 
 Open <http://localhost:8085>. The frontend does not need `npm` / a build step.
+
+## Running with Docker
+
+Requirements: Docker with Compose. No local PHP or database is needed.
+
+```bash
+docker compose up -d --build
+```
+
+- App: <http://localhost:8085> (migrations run automatically on start).
+- MySQL 8.4 is exposed on `127.0.0.1:3307` for GUI clients:
+  user `laravel`, password `secret`, database `task_manager` (root password: `secret`).
+- Data persists in the `dbdata` volume. Reset it with `docker compose down -v`.
+- `.env` is not copied into the image; settings come from `docker-compose.yml`. Set your own key with
+  `APP_KEY=$(php artisan key:generate --show) docker compose up -d`.
+- The image installs production dependencies only, so `--seed` (which needs Faker) is not run.
+
+Stop the stack with `docker compose down`.
 
 ## Running tests
 
